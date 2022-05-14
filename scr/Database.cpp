@@ -1,6 +1,18 @@
 #include "Database.h"
 #include "nanodbc/nanodbc.h"
 #include <iostream>
+#include <iterator>
+#include <algorithm>
+#include <memory>
+
+DatabaseHandler::DatabaseHandler() = default;
+
+DatabaseHandler::~DatabaseHandler()
+{
+	if (connection != nullptr) {
+		disconnectDB();
+	}
+}
 
 DatabaseHandler& DatabaseHandler::getInstance()
 {
@@ -10,37 +22,33 @@ DatabaseHandler& DatabaseHandler::getInstance()
 
 void DatabaseHandler::connectDB()
 {
-	nanodbc::connection connection{"SQLDB", "Login_Server", "123"};
-	std::cout << "CONNECTED! " << connection.driver_name() <<std::endl;
-	auto result{ nanodbc::execute(connection, "SELECT * FROM CONTACTS")};
-	std::cout << result.columns() << " " << std::endl;
-	try {
-		result.next();
-		std::cout << result.get<std::string>(0);
-		/*env = odbc::Environment::create();
-		conn = env->createConnection();
-		try {
-			conn->connect("SQLDB", "Login_Server", "123");
-			conn->setAutoCommit(false);
-			odbc::PreparedStatementRef psInsert = conn->prepareStatement("USE Messenger");
-			psInsert->executeQuery();
-		}
-		catch (odbc::Exception ex) {
-			std::cout << ex.what();
-		}*/
+	connection.reset(new nanodbc::connection{ "SQLDB", "Login_Server", "123" });
+	if (connection == nullptr) {
+		throw std::exception("Error connection to database");
 	}
-	catch (std::exception ex) {
-		std::cout << ex.what();
-	}
-	std::cout << std::endl;
+	std::cout << "CONNECTED! " << connection->driver_name() <<std::endl;
 }
 
 void DatabaseHandler::disconnectDB()
 {
+	connection->disconnect();
 }
 
-std::vector<std::vector<std::string>> DatabaseHandler::executeQuery(const std::string& inputQuery, size_t dataCount)
+std::vector<std::vector<std::string>> DatabaseHandler::executeQuery(const std::string& inputQuery)
 {
-
+	auto result{ nanodbc::execute(*connection, inputQuery) };
+	if (inputQuery.find("SELECT") != std::string::npos) {
+		std::vector<std::vector<std::string>> vectorToReturn{};
+		int i{};
+		while (result.next()) {
+			std::vector<std::string> tmpVec;
+			for (int j{ 0 }; j < result.columns(); j++) {
+				tmpVec.push_back(result.get<std::string>(j, "null"));
+			}
+			vectorToReturn.push_back(tmpVec);
+			i++;
+		}
+		return vectorToReturn;
+	}
 	return {};
 }
