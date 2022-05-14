@@ -39,14 +39,13 @@ std::vector<std::vector<std::string>> DatabaseHandler::executeQuery(const std::s
 	auto result{ nanodbc::execute(*connection, inputQuery) };
 	if (inputQuery.find("SELECT") != std::string::npos) {
 		std::vector<std::vector<std::string>> vectorToReturn{};
-		int i{};
+		auto columns{ result.columns() };
 		while (result.next()) {
 			std::vector<std::string> tmpVec;
-			for (int j{ 0 }; j < result.columns(); j++) {
+			for (int j{ 0 }; j < columns; j++) {
 				tmpVec.push_back(result.get<std::string>(j, "null"));
 			}
 			vectorToReturn.push_back(tmpVec);
-			i++;
 		}
 		return vectorToReturn;
 	}
