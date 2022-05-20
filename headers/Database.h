@@ -7,7 +7,7 @@ class DatabaseHandler {
 public:
 	~DatabaseHandler();
 	static DatabaseHandler& getInstance();
-	void connectDB();
+	void connectDB(const std::string& login, const std::string& password);
 	void disconnectDB();
 	std::vector<std::vector<std::string>> executeQuery(const std::string& inputQuery);
 };
