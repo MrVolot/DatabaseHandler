@@ -20,9 +20,9 @@ DatabaseHandler& DatabaseHandler::getInstance()
 	return instance;
 }
 
-void DatabaseHandler::connectDB()
+void DatabaseHandler::connectDB(const std::string& login, const std::string& password)
 {
-	connection.reset(new nanodbc::connection{ "SQLDB", "Login_Server", "123" });
+	connection.reset(new nanodbc::connection{ "SQLDB", login, password });
 	if (connection == nullptr) {
 		throw std::exception("Error connection to database");
 	}
