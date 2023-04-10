@@ -64,7 +64,7 @@ bool DatabaseHandler::tableExists(const std::string& tableName) {
 	return !executeQuery(query).empty();
 }
 
-void DatabaseHandler::executeWithPreparedStatement(const std::string& query, std::vector<std::string> bindings)
+nanodbc::result DatabaseHandler::executeWithPreparedStatement(const std::string& query, std::vector<std::string> bindings)
 {
 	auto statement = nanodbc::statement(*connection, query);
 
@@ -75,5 +75,5 @@ void DatabaseHandler::executeWithPreparedStatement(const std::string& query, std
 	}
 
 	// Execute the query
-	statement.execute();
+	return statement.execute();
 }

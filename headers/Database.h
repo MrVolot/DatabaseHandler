@@ -11,5 +11,5 @@ public:
 	void disconnectDB();
 	std::vector<std::vector<std::string>> executeQuery(const std::string& inputQuery);
 	bool tableExists(const std::string& tableName);
-	void executeWithPreparedStatement(const std::string& query, std::vector<std::string> bindings);
+	nanodbc::result executeWithPreparedStatement(const std::string& query, std::vector<std::string> bindings);
 };
