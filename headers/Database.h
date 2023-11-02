@@ -12,4 +12,5 @@ public:
 	std::vector<std::vector<std::string>> executeQuery(const std::string& inputQuery);
 	bool tableExists(const std::string& tableName);
 	nanodbc::result executeWithPreparedStatement(const std::string& query, std::vector<std::string> bindings);
+	nanodbc::result executeDbcQuery(const std::string& query);
 };

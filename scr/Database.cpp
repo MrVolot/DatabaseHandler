@@ -77,3 +77,7 @@ nanodbc::result DatabaseHandler::executeWithPreparedStatement(const std::string&
 	// Execute the query
 	return statement.execute();
 }
+
+nanodbc::result DatabaseHandler::executeDbcQuery(const std::string& query) {
+	return nanodbc::execute(*connection, query);
+}
