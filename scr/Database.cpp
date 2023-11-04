@@ -60,7 +60,7 @@ std::vector<std::vector<std::string>> DatabaseHandler::executeQuery(const std::s
 }
 
 bool DatabaseHandler::tableExists(const std::string& tableName) {
-	std::string query{ "SELECT object_id FROM sys.tables WHERE name = '" + tableName + "'" };
+	std::string query{ "SELECT OBJECT_ID('" + tableName + "') AS object_id" };
 	return !executeQuery(query).empty();
 }
 
