@@ -60,8 +60,17 @@ std::vector<std::vector<std::string>> DatabaseHandler::executeQuery(const std::s
 }
 
 bool DatabaseHandler::tableExists(const std::string& tableName) {
-	std::string query{ "SELECT OBJECT_ID('" + tableName + "') AS object_id" };
-	return !executeQuery(query).empty();
+	std::string query = "SELECT OBJECT_ID('" + tableName + "') AS object_id";
+	nanodbc::result results = nanodbc::execute(*connection, query);
+
+	if (results.next()) {
+		if (results.is_null(0)) {
+			return false;
+		}
+		auto objectId = results.get<int>(0);
+		return objectId != 0;
+	}
+	return false;
 }
 
 nanodbc::result DatabaseHandler::executeWithPreparedStatement(const std::string& query, std::vector<std::string> bindings)
